@@ -1,0 +1,11 @@
+node_modules
+.next
+build
+dist
+out
+coverage
+public
+*.lock
+package-lock.json
+.husky
+supabase/migrations

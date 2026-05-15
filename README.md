@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nebulab3D — B2B SaaS
 
-## Getting Started
+Plataforma multi-tenant para restaurantes en Colombia. Comensales escanean QR de los centros de mesa Nebulab3D, exploran menú interactivo, llaman al mesero y dejan reseñas con bonificación. Restaurantes gestionan menú, atienden llamadas en tiempo real y revisan métricas desde un panel admin.
 
-First, run the development server:
+## Stack
+
+Next.js 14 (App Router, RSC) · TypeScript estricto · Tailwind + shadcn/ui · Supabase (Postgres + Auth + Storage + Realtime + Edge Functions) · Resend · Sentry · PostHog · Vercel
+
+## Setup
 
 ```bash
+npm install
+cp .env.local.example .env.local   # rellenar credenciales
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrí http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Script                            | Acción                    |
+| --------------------------------- | ------------------------- |
+| `npm run dev`                     | dev server                |
+| `npm run build`                   | build prod                |
+| `npm run lint` / `lint:fix`       | eslint                    |
+| `npm run typecheck`               | `tsc --noEmit`            |
+| `npm run test` / `test:run`       | vitest watch / single run |
+| `npm run format` / `format:check` | prettier                  |
 
-## Learn More
+## Estructura
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/app/
+  (comensal)/      webapp del comensal (sin auth, mobile-first)
+  (admin)/         panel del restaurante (auth + tenant scope)
+  (super-admin)/   panel interno Nebulab3D
+src/lib/           utilidades, Supabase clients, validaciones Zod
+src/components/    componentes compartidos (ui/ es shadcn)
+supabase/migrations/
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Convenciones
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Branches: `feature/ENG-XXX-descripcion` · `fix/ENG-XXX-descripcion`
+- Commits: `ENG-XXX: descripción` (Linear auto-vincula)
+- PRs requieren code review antes de merge a `main`
+- TypeScript estricto: prohibido `any` salvo justificación
+- Server Components por defecto, Client solo cuando se necesite interactividad
+- Server Actions para mutaciones
+- Validación Zod en cada boundary (forms, API, edge functions)
 
-## Deploy on Vercel
+## Más
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+PRD del MVP: `docs/PRD.md` · ADRs: `docs/adr/`
