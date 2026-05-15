@@ -9,3 +9,5 @@ public
 package-lock.json
 .husky
 supabase/migrations
+supabase/.temp
+supabase/.branches
