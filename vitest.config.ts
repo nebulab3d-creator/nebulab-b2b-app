@@ -20,7 +20,11 @@ export default defineConfig(({ mode }) => {
       hookTimeout: 60_000,
     },
     resolve: {
-      alias: { '@': path.resolve(__dirname, './src') },
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+        // server-only tira en runtime fuera de Next; en tests lo neutralizamos.
+        'server-only': path.resolve(__dirname, './vitest.server-only.shim.ts'),
+      },
     },
   };
 });
