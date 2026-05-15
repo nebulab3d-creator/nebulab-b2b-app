@@ -33,6 +33,212 @@ export type Database = {
   };
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string;
+          event_data: Json;
+          event_type: string;
+          id: string;
+          session_id: string | null;
+          table_id: string | null;
+          tenant_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          event_data?: Json;
+          event_type: string;
+          id?: string;
+          session_id?: string | null;
+          table_id?: string | null;
+          tenant_id: string;
+        };
+        Update: {
+          created_at?: string;
+          event_data?: Json;
+          event_type?: string;
+          id?: string;
+          session_id?: string | null;
+          table_id?: string | null;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'analytics_events_table_id_fkey';
+            columns: ['table_id'];
+            isOneToOne: false;
+            referencedRelation: 'tables';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'analytics_events_tenant_id_fkey';
+            columns: ['tenant_id'];
+            isOneToOne: false;
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      menu_categories: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          id: string;
+          name: string;
+          position: number;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          id?: string;
+          name: string;
+          position?: number;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          position?: number;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'menu_categories_tenant_id_fkey';
+            columns: ['tenant_id'];
+            isOneToOne: false;
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      menu_items: {
+        Row: {
+          available: boolean;
+          category_id: string | null;
+          created_at: string;
+          description: string | null;
+          dietary_tags: string[];
+          id: string;
+          image_url: string | null;
+          ingredients: string[];
+          macros: Json;
+          name: string;
+          position: number;
+          price: number;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          available?: boolean;
+          category_id?: string | null;
+          created_at?: string;
+          description?: string | null;
+          dietary_tags?: string[];
+          id?: string;
+          image_url?: string | null;
+          ingredients?: string[];
+          macros?: Json;
+          name: string;
+          position?: number;
+          price?: number;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          available?: boolean;
+          category_id?: string | null;
+          created_at?: string;
+          description?: string | null;
+          dietary_tags?: string[];
+          id?: string;
+          image_url?: string | null;
+          ingredients?: string[];
+          macros?: Json;
+          name?: string;
+          position?: number;
+          price?: number;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'menu_items_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'menu_categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'menu_items_tenant_id_fkey';
+            columns: ['tenant_id'];
+            isOneToOne: false;
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      reviews: {
+        Row: {
+          bonus_code: string | null;
+          bonus_sent: boolean;
+          comment: string | null;
+          created_at: string;
+          customer_contact: string | null;
+          customer_name: string | null;
+          id: string;
+          is_public: boolean;
+          rating: number;
+          table_id: string | null;
+          tenant_id: string;
+        };
+        Insert: {
+          bonus_code?: string | null;
+          bonus_sent?: boolean;
+          comment?: string | null;
+          created_at?: string;
+          customer_contact?: string | null;
+          customer_name?: string | null;
+          id?: string;
+          is_public?: boolean;
+          rating: number;
+          table_id?: string | null;
+          tenant_id: string;
+        };
+        Update: {
+          bonus_code?: string | null;
+          bonus_sent?: boolean;
+          comment?: string | null;
+          created_at?: string;
+          customer_contact?: string | null;
+          customer_name?: string | null;
+          id?: string;
+          is_public?: boolean;
+          rating?: number;
+          table_id?: string | null;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reviews_table_id_fkey';
+            columns: ['table_id'];
+            isOneToOne: false;
+            referencedRelation: 'tables';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reviews_tenant_id_fkey';
+            columns: ['tenant_id'];
+            isOneToOne: false;
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       super_admins: {
         Row: {
           created_at: string;
@@ -47,6 +253,41 @@ export type Database = {
           id?: string;
         };
         Relationships: [];
+      };
+      tables: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          id: string;
+          number: string;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          id?: string;
+          number: string;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          id?: string;
+          number?: string;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'tables_tenant_id_fkey';
+            columns: ['tenant_id'];
+            isOneToOne: false;
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       tenants: {
         Row: {
@@ -122,6 +363,64 @@ export type Database = {
           },
         ];
       };
+      waiter_calls: {
+        Row: {
+          acknowledged_at: string | null;
+          created_at: string;
+          id: string;
+          reason: string | null;
+          resolved_at: string | null;
+          resolved_by: string | null;
+          status: string;
+          table_id: string;
+          tenant_id: string;
+        };
+        Insert: {
+          acknowledged_at?: string | null;
+          created_at?: string;
+          id?: string;
+          reason?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          status?: string;
+          table_id: string;
+          tenant_id: string;
+        };
+        Update: {
+          acknowledged_at?: string | null;
+          created_at?: string;
+          id?: string;
+          reason?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          status?: string;
+          table_id?: string;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'waiter_calls_resolved_by_fkey';
+            columns: ['resolved_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'waiter_calls_table_id_fkey';
+            columns: ['table_id'];
+            isOneToOne: false;
+            referencedRelation: 'tables';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'waiter_calls_tenant_id_fkey';
+            columns: ['tenant_id'];
+            isOneToOne: false;
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -129,7 +428,9 @@ export type Database = {
     Functions: {
       current_tenant_id: { Args: never; Returns: string };
       current_user_role: { Args: never; Returns: string };
+      is_owner_or_manager: { Args: never; Returns: boolean };
       is_super_admin: { Args: never; Returns: boolean };
+      validate_table_id: { Args: { p_table_id: string }; Returns: string };
     };
     Enums: {
       [_ in never]: never;
