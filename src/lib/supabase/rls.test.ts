@@ -172,10 +172,17 @@ describe.skipIf(!HAS_ENV)('RLS aislamiento entre tenants', () => {
     expect(error).not.toBeNull();
   });
 
-  it('anon (sin auth) no lee tenants', async () => {
+  it('anon ve tenants activos pero NO ve users', async () => {
+    // ENG-011 agregó policy: anon SELECT tenants WHERE status='active' (público para comensal).
+    // Pero `users` sigue siendo privado para anon — verificamos eso.
     const c = createClient<Database>(URL!, ANON!);
-    const { data } = await c.from('tenants').select('id');
-    // RLS para `authenticated` no aplica a `anon` → 0 filas visibles
-    expect(data?.length ?? 0).toBe(0);
+    const { data: visibleTenants } = await c
+      .from('tenants')
+      .select('id, status')
+      .in('id', [tenantA, tenantB]);
+    expect(visibleTenants?.every((t) => t.status === 'active')).toBe(true);
+
+    const { data: leakUsers } = await c.from('users').select('id');
+    expect(leakUsers?.length ?? 0).toBe(0);
   });
 });

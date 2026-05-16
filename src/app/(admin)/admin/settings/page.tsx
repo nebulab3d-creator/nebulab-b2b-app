@@ -1,0 +1,50 @@
+import Link from 'next/link';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { requireTenantUser } from '@/lib/auth/require-tenant';
+
+import { SettingsForm } from './settings-form';
+
+export default async function SettingsPage() {
+  const me = await requireTenantUser();
+
+  if (me.role !== 'owner') {
+    return (
+      <div className="mx-auto max-w-md">
+        <p className="text-sm text-muted-foreground">
+          Solo el owner del restaurante puede editar la configuración.
+        </p>
+      </div>
+    );
+  }
+
+  const settings =
+    typeof me.tenant.settings === 'object' && me.tenant.settings !== null
+      ? (me.tenant.settings as Record<string, unknown>)
+      : {};
+
+  return (
+    <div className="mx-auto max-w-xl space-y-4">
+      <Link href="/admin" className="text-xs text-muted-foreground hover:underline">
+        ← Dashboard
+      </Link>
+      <h1 className="text-2xl font-bold">Configuración del restaurante</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle>Branding y bienvenida</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SettingsForm
+            initial={{
+              name: me.tenant.name,
+              brand_color: typeof settings.brand_color === 'string' ? settings.brand_color : '',
+              logo_url: typeof settings.logo_url === 'string' ? settings.logo_url : '',
+              welcome_message:
+                typeof settings.welcome_message === 'string' ? settings.welcome_message : '',
+            }}
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

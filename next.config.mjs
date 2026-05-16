@@ -5,6 +5,12 @@ const nextConfig = {
   // experimental.instrumentationHook se vuelve default en Next 15; en 14.2 lo dejamos explícito
   // para que `src/instrumentation.ts` se cargue al boot.
   experimental: { instrumentationHook: true },
+  images: {
+    remotePatterns: [
+      // Cualquier proyecto Supabase (storage v1 public objects)
+      { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/public/**' },
+    ],
+  },
 };
 
 const sentryWebpackPluginOptions = {

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { PostHogProvider } from '@/components/analytics/posthog-provider';
@@ -38,13 +39,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="flex flex-1">
           <aside className="w-56 border-r p-4 text-sm text-muted-foreground">
             <nav className="space-y-1">
-              <SidebarItem label="Dashboard" />
-              <SidebarItem label="Menú" disabled />
-              <SidebarItem label="Mesas" disabled />
+              <SidebarLink href="/admin" label="Dashboard" />
+              <SidebarLink href="/admin/menu" label="Menú" />
+              <SidebarLink href="/admin/tables" label="Mesas" />
               <SidebarItem label="Llamadas" disabled />
               <SidebarItem label="Reseñas" disabled />
               <SidebarItem label="Métricas" disabled />
-              {me.role === 'owner' && <SidebarItem label="Usuarios" disabled />}
+              {me.role === 'owner' && (
+                <>
+                  <SidebarLink href="/admin/settings" label="Configuración" />
+                  <SidebarItem label="Usuarios" disabled />
+                </>
+              )}
             </nav>
           </aside>
           <main className="flex-1 p-6">{children}</main>
@@ -62,5 +68,16 @@ function SidebarItem({ label, disabled }: { label: string; disabled?: boolean })
       {label}
       {disabled && <span className="ml-2 text-xs">(próximamente)</span>}
     </div>
+  );
+}
+
+function SidebarLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="block rounded-md px-3 py-2 hover:bg-muted/50 hover:text-foreground"
+    >
+      {label}
+    </Link>
   );
 }
