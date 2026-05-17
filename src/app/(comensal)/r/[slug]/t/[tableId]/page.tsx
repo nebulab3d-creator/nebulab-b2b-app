@@ -27,6 +27,14 @@ export default async function ComensalMenuPage({
   const logoUrl = typeof settings.logo_url === 'string' ? settings.logo_url : null;
   const welcomeMessage =
     typeof settings.welcome_message === 'string' ? settings.welcome_message : null;
+  const bonification =
+    typeof settings.bonification === 'object' && settings.bonification !== null
+      ? (settings.bonification as { copy?: unknown })
+      : null;
+  const bonusCopy =
+    typeof bonification?.copy === 'string' && bonification.copy.length > 0
+      ? bonification.copy
+      : null;
 
   // Filtrar lo que el RLS para anon ya filtraría (defensa en profundidad y consistencia
   // si se llama vía cache que no aplica RLS por usuario):
@@ -45,6 +53,7 @@ export default async function ComensalMenuPage({
         categories={visibleCategories}
         items={visibleItems}
         tableId={table.id}
+        bonusCopy={bonusCopy}
       />
     </>
   );

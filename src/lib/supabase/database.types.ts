@@ -193,6 +193,7 @@ export type Database = {
           id: string;
           is_public: boolean;
           rating: number;
+          redeemed_at: string | null;
           table_id: string | null;
           tenant_id: string;
         };
@@ -206,6 +207,7 @@ export type Database = {
           id?: string;
           is_public?: boolean;
           rating: number;
+          redeemed_at?: string | null;
           table_id?: string | null;
           tenant_id: string;
         };
@@ -219,6 +221,7 @@ export type Database = {
           id?: string;
           is_public?: boolean;
           rating?: number;
+          redeemed_at?: string | null;
           table_id?: string | null;
           tenant_id?: string;
         };

@@ -10,6 +10,7 @@ import type { Json } from '@/lib/supabase/database.types';
 import { DIETARY_TAG_LABELS, DIETARY_TAGS, type DietaryTag } from '@/lib/validations/menu';
 
 import { ItemDetailDrawer } from './item-detail-drawer';
+import { ReviewWidget } from './review-widget';
 import { WaiterCallWidget } from './waiter-call-widget';
 
 interface Category {
@@ -42,6 +43,7 @@ interface Props {
   categories: Category[];
   items: Item[];
   tableId: string;
+  bonusCopy: string | null;
 }
 
 function normalize(s: string): string {
@@ -57,6 +59,7 @@ export function MenuExperience({
   categories,
   items,
   tableId,
+  bonusCopy,
 }: Props) {
   const [activeCategory, setActiveCategory] = useState<string | null>(categories[0]?.id ?? null);
   const [filters, setFilters] = useState<Set<DietaryTag>>(new Set());
@@ -256,9 +259,10 @@ export function MenuExperience({
         )}
       </main>
 
-      <footer className="sticky bottom-0 border-t bg-card px-4 py-3">
-        <div className="mx-auto max-w-3xl">
+      <footer className="sticky bottom-0 space-y-2 border-t bg-card px-4 py-3">
+        <div className="mx-auto max-w-3xl space-y-2">
           <WaiterCallWidget tableId={tableId} brandColor={brandColor} />
+          <ReviewWidget tableId={tableId} brandColor={brandColor} bonusCopy={bonusCopy} />
         </div>
       </footer>
 
