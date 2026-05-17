@@ -4,13 +4,13 @@ import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { trackComensalEvent } from '@/lib/comensal/analytics';
 import type { Json } from '@/lib/supabase/database.types';
 import { DIETARY_TAG_LABELS, DIETARY_TAGS, type DietaryTag } from '@/lib/validations/menu';
 
 import { ItemDetailDrawer } from './item-detail-drawer';
+import { WaiterCallWidget } from './waiter-call-widget';
 
 interface Category {
   id: string;
@@ -257,14 +257,8 @@ export function MenuExperience({
       </main>
 
       <footer className="sticky bottom-0 border-t bg-card px-4 py-3">
-        <div className="mx-auto flex max-w-3xl gap-2">
-          <Button
-            disabled
-            className="flex-1"
-            style={brandColor ? { backgroundColor: brandColor, color: 'white' } : undefined}
-          >
-            Llamar al mesero (próximamente)
-          </Button>
+        <div className="mx-auto max-w-3xl">
+          <WaiterCallWidget tableId={tableId} brandColor={brandColor} />
         </div>
       </footer>
 

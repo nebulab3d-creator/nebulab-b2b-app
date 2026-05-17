@@ -42,7 +42,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <SidebarLink href="/admin" label="Dashboard" />
               <SidebarLink href="/admin/menu" label="Menú" />
               <SidebarLink href="/admin/tables" label="Mesas" />
-              <SidebarItem label="Llamadas" disabled />
+              <SidebarLink href="/admin/calls" label="Llamadas" />
               <SidebarItem label="Reseñas" disabled />
               <SidebarItem label="Métricas" disabled />
               {me.role === 'owner' && (

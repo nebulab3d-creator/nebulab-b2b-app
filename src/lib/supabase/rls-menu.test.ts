@@ -329,6 +329,14 @@ describe.skipIf(!HAS_ENV)('RLS aislamiento — menu, tables, calls, reviews, ana
 
   it('staff puede UPDATE waiter_calls (acknowledge)', async () => {
     const admin = adminClient();
+    // Resolver cualquier llamada activa pre-existente — UNIQUE INDEX
+    // `waiter_calls_one_active_per_table` solo permite 1 no-resolved por mesa.
+    await admin
+      .from('waiter_calls')
+      .update({ status: 'resolved', resolved_at: new Date().toISOString() })
+      .eq('table_id', tenants.A.tableId)
+      .in('status', ['pending', 'acknowledged']);
+
     const { data: call } = await admin
       .from('waiter_calls')
       .insert({ tenant_id: tenants.A.id, table_id: tenants.A.tableId })
