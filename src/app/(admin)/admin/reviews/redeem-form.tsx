@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/ui/submit-button';
 
 import { setRedeemedAction, type ActionResult } from './actions';
 
@@ -19,9 +19,9 @@ export function RedeemForm({ id, currentlyRedeemed }: { id: string; currentlyRed
     <form action={action}>
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="redeemed" value={currentlyRedeemed ? 'false' : 'true'} />
-      <Button type="submit" variant={currentlyRedeemed ? 'outline' : 'default'} size="sm">
+      <SubmitButton variant={currentlyRedeemed ? 'outline' : 'default'} size="sm">
         {currentlyRedeemed ? 'Desmarcar' : 'Marcar redimida'}
-      </Button>
+      </SubmitButton>
     </form>
   );
 }

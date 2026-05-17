@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SubmitButton } from '@/components/ui/submit-button';
 
 import { signInAction, type ActionState } from '../actions';
 
@@ -49,18 +49,11 @@ export function LoginForm({ next }: { next?: string }) {
               {state.error}
             </p>
           )}
-          <SubmitButton />
+          <SubmitButton className="w-full" pendingLabel="Entrando…">
+            Entrar
+          </SubmitButton>
         </form>
       </CardContent>
     </Card>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? 'Entrando…' : 'Entrar'}
-    </Button>
   );
 }

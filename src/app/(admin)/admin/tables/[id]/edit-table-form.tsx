@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 
 import {
@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SubmitButton } from '@/components/ui/submit-button';
 
 export function EditTableForm({
   tableId,
@@ -52,7 +53,7 @@ export function EditTableForm({
           <input type="checkbox" name="active" defaultChecked={initialActive} value="true" />
           Mesa activa (si está inactiva, su QR no abre nada)
         </label>
-        <SubmitButton label="Guardar" />
+        <SubmitButton>Guardar</SubmitButton>
       </form>
 
       <form
@@ -68,14 +69,5 @@ export function EditTableForm({
         </Button>
       </form>
     </div>
-  );
-}
-
-function SubmitButton({ label }: { label: string }) {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending}>
-      {pending ? '…' : label}
-    </Button>
   );
 }

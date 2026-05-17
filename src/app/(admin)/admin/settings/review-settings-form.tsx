@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SubmitButton } from '@/components/ui/submit-button';
 
 import { updateReviewSettingsAction, type ActionResult } from './actions';
 
@@ -62,16 +62,7 @@ export function ReviewSettingsForm({ initial }: { initial: Initial }) {
           .
         </p>
       </div>
-      <SubmitButton />
+      <SubmitButton pendingLabel="Guardando…">Guardar ajustes</SubmitButton>
     </form>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending}>
-      {pending ? 'Guardando…' : 'Guardar ajustes'}
-    </Button>
   );
 }

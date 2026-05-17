@@ -1,16 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 
 import {
   submitReviewAction,
   type SubmitReviewResult,
 } from '@/app/(comensal)/r/[slug]/t/[tableId]/review-actions';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { trackComensalEvent } from '@/lib/comensal/analytics';
 
 interface Props {
@@ -92,7 +92,13 @@ export function ReviewWidget({ tableId, brandColor, bonusCopy }: Props) {
             Para enviarte la bonificación. No se publica.
           </p>
         </div>
-        <SubmitButton brandColor={brandColor} />
+        <SubmitButton
+          className="w-full"
+          pendingLabel="Enviando…"
+          style={brandColor ? { backgroundColor: brandColor, color: 'white' } : undefined}
+        >
+          Enviar reseña
+        </SubmitButton>
       </form>
     </div>
   );
@@ -120,20 +126,6 @@ function RatingPicker() {
         ))}
       </div>
     </div>
-  );
-}
-
-function SubmitButton({ brandColor }: { brandColor: string | null }) {
-  const { pending } = useFormStatus();
-  return (
-    <Button
-      type="submit"
-      className="w-full"
-      disabled={pending}
-      style={brandColor ? { backgroundColor: brandColor, color: 'white' } : undefined}
-    >
-      {pending ? 'Enviando…' : 'Enviar reseña'}
-    </Button>
   );
 }
 

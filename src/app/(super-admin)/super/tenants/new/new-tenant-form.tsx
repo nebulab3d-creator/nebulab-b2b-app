@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 
 import { createTenantWithOwnerAction } from '@/app/(super-admin)/actions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { SubmitButton } from '@/components/ui/submit-button';
 import type { ProvisionResult } from '@/lib/super-admin/provision';
 
 export function NewTenantForm() {
@@ -93,18 +94,9 @@ export function NewTenantForm() {
             Cancelar
           </Button>
         </Link>
-        <SubmitButton />
+        <SubmitButton pendingLabel="Creando…">Crear tenant + owner</SubmitButton>
       </div>
     </form>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending}>
-      {pending ? 'Creando…' : 'Crear tenant + owner'}
-    </Button>
   );
 }
 

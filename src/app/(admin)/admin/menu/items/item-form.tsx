@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 
 import {
@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { DIETARY_TAG_LABELS, DIETARY_TAGS, type DietaryTag } from '@/lib/validations/menu';
 
 interface CategoryOpt {
@@ -260,7 +261,7 @@ export function ItemForm({
           <Button type="button" variant="ghost" onClick={() => router.back()}>
             Cancelar
           </Button>
-          <SubmitButton label={mode === 'create' ? 'Crear plato' : 'Guardar'} />
+          <SubmitButton>{mode === 'create' ? 'Crear plato' : 'Guardar'}</SubmitButton>
         </div>
       </form>
 
@@ -278,14 +279,5 @@ export function ItemForm({
         </form>
       )}
     </div>
-  );
-}
-
-function SubmitButton({ label }: { label: string }) {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending}>
-      {pending ? '…' : label}
-    </Button>
   );
 }

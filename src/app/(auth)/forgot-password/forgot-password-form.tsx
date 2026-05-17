@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SubmitButton } from '@/components/ui/submit-button';
 
 import { sendResetEmailAction, type ActionState } from '../actions';
 
@@ -33,7 +33,9 @@ export function ForgotPasswordForm() {
           {state && state.ok === true && state.message && (
             <p className="text-sm text-muted-foreground">{state.message}</p>
           )}
-          <SubmitButton />
+          <SubmitButton className="w-full" pendingLabel="Enviando…">
+            Enviar link
+          </SubmitButton>
           <p className="text-center text-xs text-muted-foreground">
             <Link href="/login" className="hover:underline">
               ← Volver a entrar
@@ -42,14 +44,5 @@ export function ForgotPasswordForm() {
         </form>
       </CardContent>
     </Card>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? 'Enviando…' : 'Enviar link'}
-    </Button>
   );
 }

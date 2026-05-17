@@ -2,13 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 
 import { createTableAction, type ActionResult } from '@/app/(admin)/admin/tables/actions';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SubmitButton } from '@/components/ui/submit-button';
 
 export function NewTableForm() {
   const [state, action] = useFormState<ActionResult, FormData>(createTableAction, null);
@@ -35,16 +35,9 @@ export function NewTableForm() {
           {state.error}
         </p>
       )}
-      <SubmitButton />
+      <SubmitButton className="w-full" pendingLabel="Creando…">
+        Crear mesa
+      </SubmitButton>
     </form>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? 'Creando…' : 'Crear mesa'}
-    </Button>
   );
 }

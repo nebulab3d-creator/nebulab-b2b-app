@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 
 import {
@@ -9,7 +9,7 @@ import {
   setTenantStatusAction,
   type ActionResult,
 } from '@/app/(super-admin)/actions';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/ui/submit-button';
 
 export const TenantActions = {
   StatusButtons,
@@ -67,7 +67,7 @@ function StatusForm({
     >
       <input type="hidden" name="id" value={tenantId} />
       <input type="hidden" name="status" value={status} />
-      <SubmitButton variant={variant} label={label} />
+      <SubmitButton variant={variant}>{label}</SubmitButton>
     </form>
   );
 }
@@ -84,24 +84,9 @@ function ResetPassword({ userId, email }: { userId: string; email: string }) {
     <form action={action}>
       <input type="hidden" name="user_id" value={userId} />
       <input type="hidden" name="email" value={email} />
-      <SubmitButton label="Reset pwd" variant="ghost" size="sm" />
+      <SubmitButton variant="ghost" size="sm">
+        Reset pwd
+      </SubmitButton>
     </form>
-  );
-}
-
-function SubmitButton({
-  label,
-  variant,
-  size,
-}: {
-  label: string;
-  variant: 'default' | 'secondary' | 'destructive' | 'ghost';
-  size?: 'sm' | 'default' | 'lg';
-}) {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" variant={variant} size={size} disabled={pending}>
-      {pending ? '…' : label}
-    </Button>
   );
 }

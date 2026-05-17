@@ -11,6 +11,7 @@ import {
 } from '@/app/(admin)/admin/calls/actions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { createClient } from '@/lib/supabase/client';
 import type { WaiterCallStatus } from '@/lib/validations/waiter-calls';
 
@@ -189,9 +190,9 @@ function AckForm({ id }: { id: string }) {
   return (
     <form action={action}>
       <input type="hidden" name="id" value={id} />
-      <Button type="submit" variant="outline" size="sm">
+      <SubmitButton variant="outline" size="sm">
         Voy en camino
-      </Button>
+      </SubmitButton>
     </form>
   );
 }
@@ -205,9 +206,7 @@ function ResolveForm({ id }: { id: string }) {
   return (
     <form action={action}>
       <input type="hidden" name="id" value={id} />
-      <Button type="submit" size="sm">
-        Atendida
-      </Button>
+      <SubmitButton size="sm">Atendida</SubmitButton>
     </form>
   );
 }
