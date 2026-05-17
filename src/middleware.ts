@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 import type { Database } from '@/lib/supabase/database.types';
-import { publicEnv } from '@/lib/supabase/env';
+import { getPublicEnv } from '@/lib/supabase/env';
 
 const PROTECTED_PREFIXES = ['/admin', '/super', '/change-password'] as const;
 const AUTH_PATHS = new Set(['/login', '/forgot-password']);
@@ -16,10 +16,11 @@ const AUTH_PATHS = new Set(['/login', '/forgot-password']);
  */
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
+  const env = getPublicEnv();
 
   const supabase = createServerClient<Database>(
-    publicEnv.NEXT_PUBLIC_SUPABASE_URL,
-    publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
