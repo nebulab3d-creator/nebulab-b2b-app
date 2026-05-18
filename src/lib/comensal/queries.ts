@@ -2,6 +2,7 @@ import 'server-only';
 
 import { unstable_cache } from 'next/cache';
 
+import { createCacheableAnonClient } from '@/lib/supabase/cacheable';
 import type { Database } from '@/lib/supabase/database.types';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 
@@ -39,21 +40,20 @@ export interface PublicMenu {
 }
 
 /**
- * Carga el menú público de un tenant. Se cachea con tag `tenant-menu:<id>`
+ * Carga el menú público de un tenant. Se cachea con tag `tenant-menu-by-slug:<slug>`
  * que las Server Actions del admin invalidan al modificar el menú.
  *
- * RLS para anon ya filtra:
- *   - tenants: status='active' implícito porque el comensal entra solo si el slug existe
+ * IMPORTANTE: usa `createCacheableAnonClient` (sin cookies). El client de
+ * `server.ts` usa `cookies()` y Next 14 PROHÍBE llamarla dentro de
+ * `unstable_cache(...)`. Para reads del comensal (anon) las cookies no aportan.
+ *
+ * RLS de anon ya filtra:
+ *   - tenants: status='active' (policy `tenants_anon_select_active`)
  *   - menu_categories: active=true
  *   - menu_items: available=true
- *
- * (Nota: el RLS de `tenants` para anon NO está definido aún — anon NO puede leer tenants.
- * Por eso usamos el server client desde Server Component, que corre con anon role del visitante,
- * pero la query de tenant la hacemos por slug y necesitamos que la policy lo permita.
- * Workaround MVP: agregamos una policy mínima de anon SELECT sobre tenants en la próxima migración.)
  */
 async function fetchPublicMenu(slug: string): Promise<PublicMenu | null> {
-  const supabase = createServerClient();
+  const supabase = createCacheableAnonClient();
 
   const { data: tenant } = await supabase
     .from('tenants')
