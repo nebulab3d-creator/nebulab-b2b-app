@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { PostHogProvider } from '@/components/analytics/posthog-provider';
 import { LogoutButton } from '@/components/auth/logout-button';
 import { getCurrentUser } from '@/lib/auth/get-current-user';
+import { readOnboardedAt } from '@/lib/auth/onboarding';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const me = await getCurrentUser();
@@ -11,6 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!me) redirect('/login');
   if (me.kind === 'super') redirect('/super');
   if (me.profile.must_change_password) redirect('/change-password');
+  if (!readOnboardedAt(me.tenant.settings)) redirect('/onboarding');
 
   return (
     <PostHogProvider

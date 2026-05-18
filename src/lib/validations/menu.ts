@@ -82,6 +82,22 @@ export const reorderSchema = z.object({
 
 // ─────────────────────────── Tenant settings ─────────────────
 
+export const MENU_TEMPLATES = ['default', 'compact', 'grid'] as const;
+export type MenuTemplate = (typeof MENU_TEMPLATES)[number];
+
+export const MENU_TEMPLATE_LABELS: Record<MenuTemplate, string> = {
+  default: 'Cards con foto grande',
+  compact: 'Lista compacta sin foto',
+  grid: 'Grid de 2 columnas',
+};
+
+export const MENU_TEMPLATE_DESCRIPTIONS: Record<MenuTemplate, string> = {
+  default:
+    'Cada plato en una card horizontal con foto cuadrada de 80px. Ideal para menús visuales.',
+  compact: 'Lista tipo carta clásica: nombre, descripción, precio. Sin fotos. Carga ultra rápida.',
+  grid: 'Dos columnas con cards más chicas y foto cuadrada. Compacto pero visual.',
+};
+
 export const updateTenantSettingsSchema = z.object({
   name: z.string().trim().min(2).max(80),
   brand_color: z
@@ -92,6 +108,7 @@ export const updateTenantSettingsSchema = z.object({
     .or(z.literal('')),
   logo_url: z.string().trim().url('URL inválida').optional().or(z.literal('')),
   welcome_message: z.string().trim().max(280).optional().or(z.literal('')),
+  menu_template: z.enum(MENU_TEMPLATES).default('default'),
 });
 
 export type UpdateTenantSettingsInput = z.infer<typeof updateTenantSettingsSchema>;

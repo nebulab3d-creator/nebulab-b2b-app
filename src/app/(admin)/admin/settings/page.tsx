@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireTenantUser } from '@/lib/auth/require-tenant';
+import { MENU_TEMPLATES, type MenuTemplate } from '@/lib/validations/menu';
 import { bonificationSettingsSchema, type BonificationSettings } from '@/lib/validations/reviews';
 
 import { BonificationForm } from './bonification-form';
@@ -56,6 +57,9 @@ export default async function SettingsPage() {
               logo_url: typeof settings.logo_url === 'string' ? settings.logo_url : '',
               welcome_message:
                 typeof settings.welcome_message === 'string' ? settings.welcome_message : '',
+              menu_template: MENU_TEMPLATES.includes(settings.menu_template as MenuTemplate)
+                ? (settings.menu_template as MenuTemplate)
+                : 'default',
             }}
           />
         </CardContent>

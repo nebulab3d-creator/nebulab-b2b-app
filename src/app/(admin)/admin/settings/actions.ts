@@ -31,6 +31,7 @@ export async function updateTenantSettingsAction(
     brand_color: parsed.data.brand_color || null,
     logo_url: parsed.data.logo_url || null,
     welcome_message: parsed.data.welcome_message || null,
+    menu_template: parsed.data.menu_template,
   };
 
   const admin = createAdminClient();

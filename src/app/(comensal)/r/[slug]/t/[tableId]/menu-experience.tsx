@@ -7,7 +7,13 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { trackComensalEvent } from '@/lib/comensal/analytics';
 import type { Json } from '@/lib/supabase/database.types';
-import { DIETARY_TAG_LABELS, DIETARY_TAGS, type DietaryTag } from '@/lib/validations/menu';
+import { cn } from '@/lib/utils';
+import {
+  DIETARY_TAG_LABELS,
+  DIETARY_TAGS,
+  type DietaryTag,
+  type MenuTemplate,
+} from '@/lib/validations/menu';
 
 import { ItemDetailDrawer } from './item-detail-drawer';
 import { ReviewWidget } from './review-widget';
@@ -44,6 +50,7 @@ interface Props {
   items: Item[];
   tableId: string;
   bonusCopy: string | null;
+  menuTemplate: MenuTemplate;
 }
 
 function normalize(s: string): string {
@@ -60,6 +67,7 @@ export function MenuExperience({
   items,
   tableId,
   bonusCopy,
+  menuTemplate,
 }: Props) {
   const [activeCategory, setActiveCategory] = useState<string | null>(categories[0]?.id ?? null);
   const [filters, setFilters] = useState<Set<DietaryTag>>(new Set());
@@ -216,11 +224,12 @@ export function MenuExperience({
             return (
               <section key={cat.id} id={`cat-${cat.id}`} className="space-y-3 py-4">
                 <h2 className="text-lg font-semibold">{cat.name}</h2>
-                <div className="grid grid-cols-1 gap-3">
+                <ItemsGrid template={menuTemplate}>
                   {inCat.map((it) => (
                     <ItemCard
                       key={it.id}
                       item={it}
+                      template={menuTemplate}
                       onClick={() => {
                         setSelected(it);
                         void trackComensalEvent({
@@ -231,7 +240,7 @@ export function MenuExperience({
                       }}
                     />
                   ))}
-                </div>
+                </ItemsGrid>
               </section>
             );
           })
@@ -239,11 +248,12 @@ export function MenuExperience({
         {(itemsByCategory.get('__none__') ?? []).length > 0 && (
           <section className="space-y-3 py-4">
             <h2 className="text-lg font-semibold">Otros</h2>
-            <div className="grid grid-cols-1 gap-3">
+            <ItemsGrid template={menuTemplate}>
               {itemsByCategory.get('__none__')?.map((it) => (
                 <ItemCard
                   key={it.id}
                   item={it}
+                  template={menuTemplate}
                   onClick={() => {
                     setSelected(it);
                     void trackComensalEvent({
@@ -254,7 +264,7 @@ export function MenuExperience({
                   }}
                 />
               ))}
-            </div>
+            </ItemsGrid>
           </section>
         )}
       </main>
@@ -277,22 +287,59 @@ export function MenuExperience({
   );
 }
 
-function ItemCard({ item, onClick }: { item: Item; onClick: () => void }) {
+function ItemsGrid({ template, children }: { template: MenuTemplate; children: React.ReactNode }) {
+  return (
+    <div
+      className={cn(
+        'grid gap-3',
+        template === 'grid' ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1',
+        template === 'compact' && 'gap-1',
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+function ItemCard({
+  item,
+  template,
+  onClick,
+}: {
+  item: Item;
+  template: MenuTemplate;
+  onClick: () => void;
+}) {
+  const showImage = template !== 'compact';
+  const imageSize = template === 'grid' ? 'h-16 w-16' : 'h-20 w-20';
+  const padding = template === 'compact' ? 'p-2' : 'p-3';
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex gap-3 rounded-lg border bg-card p-3 text-left transition-colors hover:bg-muted/30"
+      className={cn(
+        'flex gap-3 rounded-lg border bg-card text-left transition-colors hover:bg-muted/30',
+        padding,
+      )}
     >
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded bg-muted">
-        {item.image_url ? (
-          <Image src={item.image_url} alt={item.name} fill sizes="80px" className="object-cover" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-[10px] text-muted-foreground">
-            sin foto
-          </div>
-        )}
-      </div>
+      {showImage && (
+        <div className={cn('relative shrink-0 overflow-hidden rounded bg-muted', imageSize)}>
+          {item.image_url ? (
+            <Image
+              src={item.image_url}
+              alt={item.name}
+              fill
+              sizes={template === 'grid' ? '64px' : '80px'}
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-[10px] text-muted-foreground">
+              sin foto
+            </div>
+          )}
+        </div>
+      )}
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex items-start justify-between gap-2">
           <span className="leading-tight font-medium">{item.name}</span>
@@ -300,10 +347,13 @@ function ItemCard({ item, onClick }: { item: Item; onClick: () => void }) {
             ${Number(item.price).toLocaleString('es-CO')}
           </span>
         </div>
-        {item.description && (
+        {item.description && template !== 'compact' && (
           <p className="line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
         )}
-        {(item.dietary_tags ?? []).length > 0 && (
+        {item.description && template === 'compact' && (
+          <p className="line-clamp-1 text-xs text-muted-foreground">{item.description}</p>
+        )}
+        {(item.dietary_tags ?? []).length > 0 && template !== 'compact' && (
           <div className="flex flex-wrap gap-1">
             {(item.dietary_tags as DietaryTag[]).slice(0, 3).map((t) => (
               <Badge key={t} variant="outline" className="text-[10px]">

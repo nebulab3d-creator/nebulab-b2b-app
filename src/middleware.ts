@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import type { Database } from '@/lib/supabase/database.types';
 import { getPublicEnv } from '@/lib/supabase/env';
 
-const PROTECTED_PREFIXES = ['/admin', '/super', '/change-password'] as const;
+const PROTECTED_PREFIXES = ['/admin', '/super', '/change-password', '/onboarding'] as const;
 const AUTH_PATHS = new Set(['/login', '/forgot-password']);
 
 /**

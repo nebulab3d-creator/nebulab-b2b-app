@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { fetchActiveTable, getPublicMenuCached } from '@/lib/comensal/queries';
+import { MENU_TEMPLATES, type MenuTemplate } from '@/lib/validations/menu';
 
 import { MenuExperience } from './menu-experience';
 import { TrackQrScan } from './track-qr-scan';
@@ -35,6 +36,9 @@ export default async function ComensalMenuPage({
     typeof bonification?.copy === 'string' && bonification.copy.length > 0
       ? bonification.copy
       : null;
+  const menuTemplate: MenuTemplate = MENU_TEMPLATES.includes(settings.menu_template as MenuTemplate)
+    ? (settings.menu_template as MenuTemplate)
+    : 'default';
 
   // Filtrar lo que el RLS para anon ya filtraría (defensa en profundidad y consistencia
   // si se llama vía cache que no aplica RLS por usuario):
@@ -54,6 +58,7 @@ export default async function ComensalMenuPage({
         items={visibleItems}
         tableId={table.id}
         bonusCopy={bonusCopy}
+        menuTemplate={menuTemplate}
       />
     </>
   );

@@ -11,12 +11,19 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SubmitButton } from '@/components/ui/submit-button';
+import {
+  MENU_TEMPLATES,
+  MENU_TEMPLATE_DESCRIPTIONS,
+  MENU_TEMPLATE_LABELS,
+  type MenuTemplate,
+} from '@/lib/validations/menu';
 
 interface Initial {
   name: string;
   brand_color: string;
   logo_url: string;
   welcome_message: string;
+  menu_template: MenuTemplate;
 }
 
 export function SettingsForm({ initial }: { initial: Initial }) {
@@ -71,6 +78,29 @@ export function SettingsForm({ initial }: { initial: Initial }) {
           placeholder="Bienvenidos a [restaurante]…"
         />
       </div>
+      <fieldset className="space-y-2">
+        <legend className="text-sm font-medium">Plantilla del menú (cómo se ve al comensal)</legend>
+        <div className="space-y-2">
+          {MENU_TEMPLATES.map((t) => (
+            <label
+              key={t}
+              className="flex cursor-pointer items-start gap-3 rounded border p-3 hover:bg-muted/30"
+            >
+              <input
+                type="radio"
+                name="menu_template"
+                value={t}
+                defaultChecked={initial.menu_template === t}
+                className="mt-1"
+              />
+              <div className="flex-1 space-y-1">
+                <div className="text-sm font-medium">{MENU_TEMPLATE_LABELS[t]}</div>
+                <div className="text-xs text-muted-foreground">{MENU_TEMPLATE_DESCRIPTIONS[t]}</div>
+              </div>
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <SubmitButton pendingLabel="Guardando…">Guardar</SubmitButton>
     </form>
   );

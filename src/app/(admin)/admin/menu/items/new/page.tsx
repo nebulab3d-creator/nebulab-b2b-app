@@ -6,13 +6,24 @@ import { createClient } from '@/lib/supabase/server';
 
 import { ItemForm } from '../item-form';
 
-export default async function NewItemPage() {
+export default async function NewItemPage({
+  searchParams,
+}: {
+  searchParams: { category?: string };
+}) {
   await requireTenantUser(['owner', 'manager']);
   const supabase = createClient();
   const { data: categories } = await supabase
     .from('menu_categories')
     .select('id, name')
     .order('position', { ascending: true });
+
+  // Pre-seleccionar categoría si vino por query (?category=<id>) y existe
+  const presetCategoryId =
+    typeof searchParams.category === 'string' &&
+    (categories ?? []).some((c) => c.id === searchParams.category)
+      ? searchParams.category
+      : null;
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
@@ -28,7 +39,7 @@ export default async function NewItemPage() {
             mode="create"
             categories={categories ?? []}
             initial={{
-              category_id: null,
+              category_id: presetCategoryId,
               name: '',
               description: '',
               price: 0,
