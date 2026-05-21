@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
       globals: true,
       css: true,
       env,
+      exclude: ['tests/e2e/**'],
       // RLS tests pegan a Supabase real → más tiempo por test
       testTimeout: 30_000,
       hookTimeout: 60_000,

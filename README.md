@@ -25,6 +25,7 @@ Abrí http://localhost:3000
 | `npm run lint` / `lint:fix`       | eslint                    |
 | `npm run typecheck`               | `tsc --noEmit`            |
 | `npm run test` / `test:run`       | vitest watch / single run |
+| `npm run test:e2e`                | playwright e2e            |
 | `npm run format` / `format:check` | prettier                  |
 
 ## Estructura
