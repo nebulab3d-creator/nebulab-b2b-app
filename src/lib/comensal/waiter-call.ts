@@ -3,7 +3,7 @@
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
 import { createClient } from '@/lib/supabase/client';
-import type { WaiterCallReason, WaiterCallStatus } from '@/lib/validations/waiter-calls';
+import type { WaiterCallStatus } from '@/lib/validations/waiter-calls';
 
 const STORAGE_KEY = 'nb3d.active_call_id';
 
@@ -41,7 +41,7 @@ export type CreateResult =
  */
 export async function createWaiterCall(
   tableId: string,
-  reason: WaiterCallReason | null,
+  reason: string | null,
 ): Promise<CreateResult> {
   const supabase = createClient();
   const { error } = await supabase.from('waiter_calls').insert({

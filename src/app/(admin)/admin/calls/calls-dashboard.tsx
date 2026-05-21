@@ -155,7 +155,7 @@ function CallCard({ call, tableNumber }: { call: CallRow; tableNumber: string })
         <div className="text-2xl font-bold">Mesa {tableNumber}</div>
         <div>
           <div className="text-sm">
-            {call.reason ? <span className="capitalize">{call.reason}</span> : 'Sin razón'}
+            {call.reason ? <span>{call.reason}</span> : 'Sin razón'}
             {call.status === 'acknowledged' && (
               <Badge variant="outline" className="ml-2">
                 en camino
