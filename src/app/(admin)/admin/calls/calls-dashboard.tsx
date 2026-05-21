@@ -12,6 +12,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { SubmitButton } from '@/components/ui/submit-button';
+import {
+  requestPermission,
+  sendNotification,
+  isSupported,
+} from '@/lib/notifications/notifications';
 import { createClient } from '@/lib/supabase/client';
 import type { WaiterCallStatus } from '@/lib/validations/waiter-calls';
 
@@ -48,8 +53,21 @@ function beep(audioCtx: AudioContext) {
 export function CallsDashboard({ tenantId, initialCalls, tableNumbers }: Props) {
   const [calls, setCalls] = useState<CallRow[]>(initialCalls);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [notificationsSupported, setNotificationsSupported] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const [, forceTick] = useState(0);
+
+  // Detectar soporte de notificaciones al montar
+  useEffect(() => {
+    if (isSupported()) {
+      setNotificationsSupported(true);
+      // Si ya tienen permiso, marcar como enabled
+      if (Notification.permission === 'granted') {
+        setNotificationsEnabled(true);
+      }
+    }
+  }, []);
 
   // Refresh cada 10s para que los timers de "hace X min" actualicen
   useEffect(() => {
@@ -77,7 +95,16 @@ export function CallsDashboard({ tenantId, initialCalls, tableNumbers }: Props) 
               prev.some((c) => c.id === row.id) ? prev : [...prev, row].sort(byCreated),
             );
             if (audioCtxRef.current) beep(audioCtxRef.current);
-            toast.info(`Mesa ${tableNumbers[row.table_id] ?? '?'} te llama`);
+            const tableNum = tableNumbers[row.table_id] ?? '?';
+            toast.info(`Mesa ${tableNum} te llama`);
+            // Enviar notificación del SO si está enabled
+            if (notificationsEnabled) {
+              sendNotification(`Mesa ${tableNum} te llama`, {
+                body: row.reason ? `Razón: ${row.reason}` : 'Sin razón especificada',
+                tag: 'waiter-call',
+                requireInteraction: true,
+              });
+            }
           } else if (payload.eventType === 'UPDATE') {
             const row = payload.new as CallRow;
             setCalls((prev) =>
@@ -96,7 +123,7 @@ export function CallsDashboard({ tenantId, initialCalls, tableNumbers }: Props) 
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [tenantId, tableNumbers]);
+  }, [tenantId, tableNumbers, notificationsEnabled]);
 
   const enableSound = useCallback(() => {
     const AudioCtor =
@@ -108,6 +135,16 @@ export function CallsDashboard({ tenantId, initialCalls, tableNumbers }: Props) 
     setSoundEnabled(true);
   }, []);
 
+  const enableNotifications = useCallback(async () => {
+    const permission = await requestPermission();
+    if (permission === 'granted') {
+      setNotificationsEnabled(true);
+      toast.success('Notificaciones activadas');
+    } else if (permission === 'denied') {
+      toast.error('Permiso denegado. Habilitá notificaciones en los settings del navegador.');
+    }
+  }, []);
+
   return (
     <div className="space-y-4">
       {!soundEnabled && (
@@ -115,6 +152,17 @@ export function CallsDashboard({ tenantId, initialCalls, tableNumbers }: Props) 
           <span>🔔 Activá el sonido para escuchar cuando una mesa te llame.</span>
           <Button size="sm" onClick={enableSound}>
             Activar sonido
+          </Button>
+        </div>
+      )}
+
+      {notificationsSupported && !notificationsEnabled && (
+        <div className="flex items-center justify-between gap-3 rounded-md border border-blue-300 bg-blue-50 p-3 text-sm">
+          <span>
+            🔔 Habilita notificaciones del SO para alertas incluso si no estás mirando la pantalla.
+          </span>
+          <Button size="sm" onClick={enableNotifications}>
+            Habilitar notificaciones
           </Button>
         </div>
       )}
