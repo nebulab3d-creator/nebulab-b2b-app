@@ -16,6 +16,12 @@ npm run dev
 
 Abrí http://localhost:3000
 
+## Ambientes (Supabase)
+
+- Dev/CI/Preview: `nebulab3d-dev` (usar estas keys en `.env.local`, GitHub Actions y Vercel Preview).
+- Prod: Vercel Production apunta al proyecto original `dyarfrecbhciygriqyuf`.
+- Flujo: PR contra dev → preview deploy → merge a `main` → prod.
+
 ## Scripts
 
 | Script                            | Acción                    |
