@@ -9,7 +9,7 @@ Sentry.init({
   tracesSampleRate: 0.1,
   beforeSend(event) {
     const url = event.request?.url ?? '';
-    if (url.includes('/r/')) return null;
+    if (url.includes('/r/') || url.includes('/q/')) return null;
     return event;
   },
 });

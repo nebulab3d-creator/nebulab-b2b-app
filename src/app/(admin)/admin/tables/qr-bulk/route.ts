@@ -2,7 +2,8 @@ import JSZip from 'jszip';
 import { type NextRequest } from 'next/server';
 
 import { requireTenantUser } from '@/lib/auth/require-tenant';
-import { tableQrPngBuffer } from '@/lib/qr/generate';
+import { qrPngBuffer } from '@/lib/qr/generate';
+import { ensureTableQrUrl } from '@/lib/qr/links';
 import { createClient } from '@/lib/supabase/server';
 
 export async function GET(_req: NextRequest) {
@@ -20,7 +21,8 @@ export async function GET(_req: NextRequest) {
 
   const zip = new JSZip();
   for (const t of tables) {
-    const png = await tableQrPngBuffer(me.tenant.slug, t.id);
+    const url = await ensureTableQrUrl(supabase, me.tenant.id, me.tenant.slug, t.id);
+    const png = await qrPngBuffer(url);
     zip.file(`mesa-${t.number}.png`, png);
   }
   const zipBuf = await zip.generateAsync({ type: 'nodebuffer' });

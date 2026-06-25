@@ -3,10 +3,12 @@ import { notFound } from 'next/navigation';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireTenantUser } from '@/lib/auth/require-tenant';
-import { tableQrSvgDataUrl, tableUrl } from '@/lib/qr/generate';
+import { qrLinkUrl, qrSvgDataUrl, tableUrl } from '@/lib/qr/generate';
+import { insertTableQrLink } from '@/lib/qr/links';
 import { createClient } from '@/lib/supabase/server';
 
 import { EditTableForm } from './edit-table-form';
+import { QrLinkForm } from './qr-link-form';
 
 export default async function TableDetailPage({ params }: { params: { id: string } }) {
   const me = await requireTenantUser();
@@ -18,8 +20,28 @@ export default async function TableDetailPage({ params }: { params: { id: string
     .maybeSingle();
   if (!t) notFound();
 
-  const url = tableUrl(me.tenant.slug, t.id);
-  const qrDataUrl = await tableQrSvgDataUrl(me.tenant.slug, t.id);
+  const canEdit = me.role === 'owner' || me.role === 'manager';
+
+  // qr_link "home" de la mesa. Si no existe y el rol lo permite, se crea on-read
+  // (los QR creados por backfill/createTable ya lo tienen).
+  let { data: link } = await supabase
+    .from('qr_links')
+    .select('id, code, target_url, active')
+    .eq('table_id', t.id)
+    .maybeSingle();
+  if (!link && canEdit) {
+    const code = await insertTableQrLink(supabase, me.tenant.id, t.id);
+    if (code) {
+      ({ data: link } = await supabase
+        .from('qr_links')
+        .select('id, code, target_url, active')
+        .eq('table_id', t.id)
+        .maybeSingle());
+    }
+  }
+
+  const url = link ? qrLinkUrl(link.code) : tableUrl(me.tenant.slug, t.id);
+  const qrDataUrl = await qrSvgDataUrl(url);
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -58,6 +80,15 @@ export default async function TableDetailPage({ params }: { params: { id: string
                 Descargar SVG
               </a>
             </div>
+
+            {link ? (
+              <QrLinkForm
+                linkId={link.id}
+                initialTargetUrl={link.target_url}
+                initialActive={link.active}
+                canEdit={canEdit}
+              />
+            ) : null}
           </CardContent>
         </Card>
 
@@ -66,7 +97,7 @@ export default async function TableDetailPage({ params }: { params: { id: string
             <CardTitle>Editar</CardTitle>
           </CardHeader>
           <CardContent>
-            {me.role === 'owner' || me.role === 'manager' ? (
+            {canEdit ? (
               <EditTableForm tableId={t.id} initialNumber={t.number} initialActive={t.active} />
             ) : (
               <p className="text-sm text-muted-foreground">Solo owner o manager puede editar.</p>

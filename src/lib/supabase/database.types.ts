@@ -257,6 +257,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      qr_links: {
+        Row: {
+          active: boolean;
+          code: string;
+          created_at: string;
+          id: string;
+          table_id: string | null;
+          target_url: string | null;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          code: string;
+          created_at?: string;
+          id?: string;
+          table_id?: string | null;
+          target_url?: string | null;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          code?: string;
+          created_at?: string;
+          id?: string;
+          table_id?: string | null;
+          target_url?: string | null;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'qr_links_tenant_id_fkey';
+            columns: ['tenant_id'];
+            isOneToOne: false;
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'qr_links_table_id_fkey';
+            columns: ['table_id'];
+            isOneToOne: true;
+            referencedRelation: 'tables';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       tables: {
         Row: {
           active: boolean;
@@ -433,6 +481,7 @@ export type Database = {
       current_user_role: { Args: never; Returns: string };
       is_owner_or_manager: { Args: never; Returns: boolean };
       is_super_admin: { Args: never; Returns: boolean };
+      resolve_qr_link: { Args: { p_code: string }; Returns: string };
       validate_table_id: { Args: { p_table_id: string }; Returns: string };
     };
     Enums: {

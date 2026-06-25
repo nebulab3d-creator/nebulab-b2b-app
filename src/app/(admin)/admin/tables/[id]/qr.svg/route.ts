@@ -1,7 +1,8 @@
 import { type NextRequest } from 'next/server';
 
 import { requireTenantUser } from '@/lib/auth/require-tenant';
-import { tableQrSvgString } from '@/lib/qr/generate';
+import { qrSvgString } from '@/lib/qr/generate';
+import { ensureTableQrUrl } from '@/lib/qr/links';
 import { createClient } from '@/lib/supabase/server';
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
@@ -14,7 +15,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     .maybeSingle();
   if (!t) return new Response('Not found', { status: 404 });
 
-  const svg = await tableQrSvgString(me.tenant.slug, t.id);
+  const url = await ensureTableQrUrl(supabase, me.tenant.id, me.tenant.slug, t.id);
+  const svg = await qrSvgString(url);
   return new Response(svg, {
     headers: {
       'Content-Type': 'image/svg+xml',

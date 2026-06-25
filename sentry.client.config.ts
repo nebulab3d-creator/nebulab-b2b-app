@@ -10,10 +10,10 @@ Sentry.init({
   // Replay deshabilitado en MVP (costo + privacidad)
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 0,
-  // Comensal anon: no enviamos NADA a Sentry desde /r/* (Habeas Data)
+  // Comensal anon: no enviamos NADA a Sentry desde /r/* ni /q/* (Habeas Data)
   beforeSend(event) {
     const url = event.request?.url ?? '';
-    if (url.includes('/r/')) return null;
+    if (url.includes('/r/') || url.includes('/q/')) return null;
     return event;
   },
 });

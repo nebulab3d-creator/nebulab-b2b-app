@@ -3,6 +3,7 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 import { requireTenantUser } from '@/lib/auth/require-tenant';
+import { insertTableQrLink } from '@/lib/qr/links';
 import { createClient } from '@/lib/supabase/server';
 import { createTableSchema, tableIdSchema, updateTableSchema } from '@/lib/validations/tables';
 
@@ -19,16 +20,24 @@ export async function createTableAction(
   if (!parsed.success) return { ok: false, error: flatten(parsed.error.issues) };
 
   const supabase = createClient();
-  const { error } = await supabase.from('tables').insert({
-    tenant_id: me.tenant.id,
-    number: parsed.data.number,
-  });
+  const { data: created, error } = await supabase
+    .from('tables')
+    .insert({
+      tenant_id: me.tenant.id,
+      number: parsed.data.number,
+    })
+    .select('id')
+    .single();
   if (error) {
     return {
       ok: false,
       error: error.code === '23505' ? 'Ya existe una mesa con ese número' : error.message,
     };
   }
+
+  // Crear el QR dinámico (short link) de la mesa. Best-effort: si fallara, la
+  // página de detalle lo crea on-read igualmente.
+  await insertTableQrLink(supabase, me.tenant.id, created.id);
 
   revalidatePath('/admin/tables');
   revalidateTag(`tenant-tables:${me.tenant.id}`);
