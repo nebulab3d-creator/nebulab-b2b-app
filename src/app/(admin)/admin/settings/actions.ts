@@ -45,6 +45,8 @@ export async function updateTenantSettingsAction(
   revalidatePath('/admin');
   revalidateTag(`tenant-menu:${me.tenant.id}`);
   revalidateTag(`tenant-info:${me.tenant.slug}`);
+  // El menú del comensal (tenant + settings) se cachea por slug con este tag.
+  revalidateTag(`tenant-menu-by-slug:${me.tenant.slug}`);
   return { ok: true, message: 'Configuración guardada' };
 }
 
@@ -70,6 +72,8 @@ export async function updateBonificationAction(
   revalidatePath('/admin/settings');
   revalidateTag(`tenant-menu:${me.tenant.id}`);
   revalidateTag(`tenant-info:${me.tenant.slug}`);
+  // El menú del comensal (tenant + settings) se cachea por slug con este tag.
+  revalidateTag(`tenant-menu-by-slug:${me.tenant.slug}`);
   return { ok: true, message: 'Bonificación guardada' };
 }
 

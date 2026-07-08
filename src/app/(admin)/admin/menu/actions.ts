@@ -11,6 +11,9 @@ export type ActionResult = { ok: false; error: string } | { ok: true; message?: 
 const flatten = (issues: { message: string }[]): string => issues.map((i) => i.message).join(' · ');
 
 const tag = (tenantId: string) => `tenant-menu:${tenantId}`;
+// El menú del comensal se cachea por slug (getPublicMenuCached). Hay que
+// invalidar ESTE tag además de tenant-menu para que los cambios se vean.
+const bySlugTag = (slug: string) => `tenant-menu-by-slug:${slug}`;
 
 export async function createCategoryAction(
   _prev: ActionResult,
@@ -30,6 +33,7 @@ export async function createCategoryAction(
 
   revalidatePath('/admin/menu');
   revalidateTag(tag(me.tenant.id));
+  revalidateTag(bySlugTag(me.tenant.slug));
   return { ok: true, message: 'Categoría creada' };
 }
 
@@ -56,6 +60,7 @@ export async function updateCategoryAction(
   revalidatePath('/admin/menu');
   revalidatePath(`/admin/menu/categories/${parsed.data.id}`);
   revalidateTag(tag(me.tenant.id));
+  revalidateTag(bySlugTag(me.tenant.slug));
   return { ok: true, message: 'Categoría actualizada' };
 }
 
@@ -77,6 +82,7 @@ export async function deleteCategoryAction(
 
   revalidatePath('/admin/menu');
   revalidateTag(tag(me.tenant.id));
+  revalidateTag(bySlugTag(me.tenant.slug));
   return { ok: true, message: 'Categoría borrada (los items quedan sin categoría)' };
 }
 
@@ -118,5 +124,6 @@ export async function reorderCategoryAction(
 
   revalidatePath('/admin/menu');
   revalidateTag(tag(me.tenant.id));
+  revalidateTag(bySlugTag(me.tenant.slug));
   return { ok: true };
 }

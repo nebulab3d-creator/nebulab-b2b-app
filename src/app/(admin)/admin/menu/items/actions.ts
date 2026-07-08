@@ -14,6 +14,9 @@ export type ActionResult = { ok: false; error: string } | { ok: true; message?: 
 
 const flatten = (issues: { message: string }[]): string => issues.map((i) => i.message).join(' · ');
 const tag = (tenantId: string) => `tenant-menu:${tenantId}`;
+// El menú del comensal se cachea por slug (getPublicMenuCached); hay que
+// invalidar este tag además de tenant-menu para que los cambios se reflejen.
+const bySlugTag = (slug: string) => `tenant-menu-by-slug:${slug}`;
 
 /** Construye un objeto plano de FormData soportando multi-value (dietary_tags). */
 function formToObject(fd: FormData): Record<string, FormDataEntryValue | FormDataEntryValue[]> {
@@ -82,6 +85,7 @@ export async function createItemAction(
   revalidatePath('/admin/menu');
   revalidatePath('/admin/menu/items');
   revalidateTag(tag(me.tenant.id));
+  revalidateTag(bySlugTag(me.tenant.slug));
   return { ok: true, message: 'Plato creado' };
 }
 
@@ -144,6 +148,7 @@ export async function updateItemAction(
   revalidatePath('/admin/menu/items');
   revalidatePath(`/admin/menu/items/${parsed.data.id}`);
   revalidateTag(tag(me.tenant.id));
+  revalidateTag(bySlugTag(me.tenant.slug));
   return { ok: true, message: 'Plato actualizado' };
 }
 
@@ -174,6 +179,7 @@ export async function deleteItemAction(
   revalidatePath('/admin/menu');
   revalidatePath('/admin/menu/items');
   revalidateTag(tag(me.tenant.id));
+  revalidateTag(bySlugTag(me.tenant.slug));
   return { ok: true, message: 'Plato borrado' };
 }
 
@@ -202,6 +208,7 @@ export async function toggleItemAvailabilityAction(
   revalidatePath('/admin/menu');
   revalidatePath('/admin/menu/items');
   revalidateTag(tag(me.tenant.id));
+  revalidateTag(bySlugTag(me.tenant.slug));
   return { ok: true };
 }
 
@@ -248,5 +255,6 @@ export async function reorderItemAction(
   revalidatePath('/admin/menu');
   revalidatePath('/admin/menu/items');
   revalidateTag(tag(me.tenant.id));
+  revalidateTag(bySlugTag(me.tenant.slug));
   return { ok: true };
 }
