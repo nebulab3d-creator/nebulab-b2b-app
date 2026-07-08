@@ -29,19 +29,25 @@ export type QuickDish = QuickDishRow;
 export function MenuQuickPanel({
   categories,
   dishes,
+  categoriesInDesign,
   onCategoryCreated,
   onDishCreated,
   onDishImageChanged,
+  onAddCategoryToDesign,
   disabled,
 }: {
   categories: QuickCategory[];
   dishes: QuickDish[];
+  /** category_ids que ya tienen un bloque en el diseño (y por ende se muestran). */
+  categoriesInDesign: Set<string>;
   /** El editor agrega la categoría al estado y crea un bloque para ella. */
   onCategoryCreated: (cat: QuickCategory) => void;
   /** El editor agrega el plato al estado y recarga el preview. */
   onDishCreated: (dish: QuickDish) => void;
   /** El editor actualiza la foto del plato en el estado y recarga el preview. */
   onDishImageChanged: (itemId: string, imageUrl: string | null) => void;
+  /** El editor inserta un bloque para una categoría existente sin bloque. */
+  onAddCategoryToDesign: (categoryId: string) => void;
   disabled: boolean;
 }) {
   const [newCategory, setNewCategory] = useState('');
@@ -86,8 +92,10 @@ export function MenuQuickPanel({
               key={c.id}
               category={c}
               dishes={dishes.filter((d) => d.category_id === c.id)}
+              inDesign={categoriesInDesign.has(c.id)}
               onDishCreated={onDishCreated}
               onDishImageChanged={onDishImageChanged}
+              onAddToDesign={onAddCategoryToDesign}
               disabled={disabled}
             />
           ))}
@@ -129,14 +137,18 @@ export function MenuQuickPanel({
 function CategoryRow({
   category,
   dishes,
+  inDesign,
   onDishCreated,
   onDishImageChanged,
+  onAddToDesign,
   disabled,
 }: {
   category: QuickCategory;
   dishes: QuickDish[];
+  inDesign: boolean;
   onDishCreated: (dish: QuickDish) => void;
   onDishImageChanged: (itemId: string, imageUrl: string | null) => void;
+  onAddToDesign: (categoryId: string) => void;
   disabled: boolean;
 }) {
   const [name, setName] = useState('');
@@ -172,7 +184,24 @@ function CategoryRow({
 
   return (
     <li className="space-y-2 rounded-md border p-2">
-      <div className="text-sm font-medium">{category.name}</div>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-medium">{category.name}</span>
+        {!inDesign && (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={disabled}
+            onClick={() => onAddToDesign(category.id)}
+          >
+            Agregar al diseño
+          </Button>
+        )}
+      </div>
+      {!inDesign && (
+        <p className="text-[11px] text-amber-600">
+          Esta categoría no se muestra en el menú todavía — agregala al diseño.
+        </p>
+      )}
 
       {dishes.length > 0 && (
         <ul className="space-y-1.5">

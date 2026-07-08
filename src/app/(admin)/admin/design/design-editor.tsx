@@ -492,6 +492,21 @@ export function DesignEditor({
     reloadPreview();
   }
 
+  /** Categoría que ya existe pero no tiene bloque: la agrego al diseño. */
+  function handleAddCategoryToDesign(categoryId: string) {
+    insertBlock({
+      id: newBlockId(),
+      type: 'menu_category',
+      props: { category_id: categoryId, layout: 'cards' },
+      overrides: {},
+    });
+  }
+
+  // category_ids que ya se muestran (tienen un bloque menu_category en el diseño).
+  const categoriesInDesign = new Set(
+    doc.blocks.flatMap((b) => (b.type === 'menu_category' ? [b.props.category_id] : [])),
+  );
+
   return (
     <div className="space-y-4">
       {readOnly && (
@@ -577,9 +592,11 @@ export function DesignEditor({
             <MenuQuickPanel
               categories={cats}
               dishes={dishes}
+              categoriesInDesign={categoriesInDesign}
               onCategoryCreated={handleCategoryCreated}
               onDishCreated={handleDishCreated}
               onDishImageChanged={handleDishImageChanged}
+              onAddCategoryToDesign={handleAddCategoryToDesign}
               disabled={readOnly}
             />
           </div>
