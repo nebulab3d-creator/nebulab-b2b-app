@@ -6,11 +6,7 @@ import { redirect } from 'next/navigation';
 import { requireTenantUser } from '@/lib/auth/require-tenant';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { Json } from '@/lib/supabase/database.types';
-import {
-  MENU_TEMPLATES,
-  type MenuTemplate,
-  updateTenantSettingsSchema,
-} from '@/lib/validations/menu';
+import { updateTenantSettingsSchema } from '@/lib/validations/menu';
 import { bonificationSettingsSchema, updateReviewSettingsSchema } from '@/lib/validations/reviews';
 import { createTableSchema } from '@/lib/validations/tables';
 
@@ -33,7 +29,7 @@ export async function submitBrandingStep(
   formData: FormData,
 ): Promise<ActionState> {
   const me = await requireTenantUser(['owner']);
-  // Onboarding solo pide el subset; reusamos el schema completo con menu_template default
+  // Onboarding solo pide este subset de settings; el resto se configura después.
   const parsed = updateTenantSettingsSchema
     .pick({ name: true, brand_color: true, logo_url: true, welcome_message: true })
     .safeParse(Object.fromEntries(formData));
@@ -86,30 +82,10 @@ export async function submitReviewsStep(
   const { error } = await admin.from('tenants').update({ settings }).eq('id', me.tenant.id);
   if (error) return { ok: false, error: error.message };
 
-  redirect('/onboarding/template');
-}
-
-// ── Paso 3: Plantilla del menú ───────────────────────────────────────
-
-export async function submitTemplateStep(
-  _prev: ActionState,
-  formData: FormData,
-): Promise<ActionState> {
-  const me = await requireTenantUser(['owner']);
-  const template = formData.get('menu_template');
-  if (typeof template !== 'string' || !MENU_TEMPLATES.includes(template as MenuTemplate)) {
-    return { ok: false, error: 'Plantilla inválida' };
-  }
-
-  const settings = mergeSettings(me.tenant.settings, { menu_template: template });
-  const admin = createAdminClient();
-  const { error } = await admin.from('tenants').update({ settings }).eq('id', me.tenant.id);
-  if (error) return { ok: false, error: error.message };
-
   redirect('/onboarding/first-table');
 }
 
-// ── Paso 4: Primera mesa + marcar onboarded ──────────────────────────
+// ── Paso 3: Primera mesa + marcar onboarded ──────────────────────────
 
 export async function submitFirstTableStep(
   _prev: ActionState,

@@ -13,7 +13,7 @@ export default async function OnboardingBrandingPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Paso 1 de 4 · Branding y bienvenida</CardTitle>
+        <CardTitle>Paso 1 de 3 · Branding y bienvenida</CardTitle>
         <CardDescription>
           Cómo se ve tu restaurante a los comensales cuando escanean el QR.
         </CardDescription>

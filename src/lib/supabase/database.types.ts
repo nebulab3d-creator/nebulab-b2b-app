@@ -257,6 +257,70 @@ export type Database = {
         };
         Relationships: [];
       };
+      menu_designs: {
+        Row: {
+          created_at: string;
+          design: Json;
+          id: string;
+          locked_at: string | null;
+          locked_by: string | null;
+          published_at: string | null;
+          published_by: string | null;
+          status: string;
+          tenant_id: string;
+          updated_at: string;
+          version: number;
+        };
+        Insert: {
+          created_at?: string;
+          design?: Json;
+          id?: string;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          published_at?: string | null;
+          published_by?: string | null;
+          status?: string;
+          tenant_id: string;
+          updated_at?: string;
+          version?: number;
+        };
+        Update: {
+          created_at?: string;
+          design?: Json;
+          id?: string;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          published_at?: string | null;
+          published_by?: string | null;
+          status?: string;
+          tenant_id?: string;
+          updated_at?: string;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'menu_designs_tenant_id_fkey';
+            columns: ['tenant_id'];
+            isOneToOne: false;
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'menu_designs_published_by_fkey';
+            columns: ['published_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'menu_designs_locked_by_fkey';
+            columns: ['locked_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       qr_links: {
         Row: {
           active: boolean;
@@ -482,6 +546,7 @@ export type Database = {
       is_owner_or_manager: { Args: never; Returns: boolean };
       is_super_admin: { Args: never; Returns: boolean };
       resolve_qr_link: { Args: { p_code: string }; Returns: string };
+      tenant_storage_bytes: { Args: { p_tenant_id: string }; Returns: number };
       validate_table_id: { Args: { p_table_id: string }; Returns: string };
     };
     Enums: {

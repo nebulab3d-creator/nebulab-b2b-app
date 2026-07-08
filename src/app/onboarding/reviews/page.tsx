@@ -13,7 +13,7 @@ export default async function OnboardingReviewsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Paso 2 de 4 · Bonificación y reseñas</CardTitle>
+        <CardTitle>Paso 2 de 3 · Bonificación y reseñas</CardTitle>
         <CardDescription>
           Definí qué recompensa ofrecés a quienes dejan reseña (opcional) y el threshold público.
         </CardDescription>

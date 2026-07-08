@@ -5,6 +5,7 @@ import { unstable_cache } from 'next/cache';
 import { createCacheableAnonClient } from '@/lib/supabase/cacheable';
 import type { Database } from '@/lib/supabase/database.types';
 import { createClient as createServerClient } from '@/lib/supabase/server';
+import { parseDesignDocument, type DesignDocument } from '@/lib/validations/design';
 
 type Tenant = Pick<
   Database['public']['Tables']['tenants']['Row'],
@@ -89,6 +90,35 @@ export function getPublicMenuCached(slug: string): Promise<PublicMenu | null> {
   return unstable_cache(() => fetchPublicMenu(slug), ['public-menu', slug], {
     revalidate: 60,
     tags: [`tenant-menu-by-slug:${slug}`],
+  })();
+}
+
+/**
+ * Diseño publicado del tenant (Editor Visual). Cacheado con tag
+ * `tenant-design-by-slug:<slug>` que publishDesignAction invalida.
+ * RLS anon solo permite leer filas published de tenants activos.
+ * Devuelve null si no hay diseño publicado o no valida contra el schema
+ * (el caller cae al renderer legacy).
+ */
+async function fetchPublishedDesign(tenantId: string): Promise<DesignDocument | null> {
+  const supabase = createCacheableAnonClient();
+  const { data } = await supabase
+    .from('menu_designs')
+    .select('design')
+    .eq('tenant_id', tenantId)
+    .eq('status', 'published')
+    .maybeSingle();
+  if (!data) return null;
+  return parseDesignDocument(data.design);
+}
+
+export function getPublishedDesignCached(
+  slug: string,
+  tenantId: string,
+): Promise<DesignDocument | null> {
+  return unstable_cache(() => fetchPublishedDesign(tenantId), ['published-design', slug], {
+    revalidate: 60,
+    tags: [`tenant-design-by-slug:${slug}`],
   })();
 }
 

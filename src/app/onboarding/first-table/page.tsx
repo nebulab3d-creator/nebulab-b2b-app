@@ -6,7 +6,7 @@ export default function OnboardingFirstTablePage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Paso 4 de 4 · Tu primera mesa</CardTitle>
+        <CardTitle>Paso 3 de 3 · Tu primera mesa</CardTitle>
         <CardDescription>
           Creá tu primera mesa para generar su QR. Vas a poder agregar más mesas desde el panel.
         </CardDescription>

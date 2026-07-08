@@ -1,19 +1,19 @@
 import type { TenantUser } from './types';
 
-export const ONBOARDING_STEPS = ['branding', 'reviews', 'template', 'first-table'] as const;
+// La elección de plantilla del menú se removió del onboarding: el diseño se
+// arma en /admin/design (editor visual). El menú usa 'default' como fallback.
+export const ONBOARDING_STEPS = ['branding', 'reviews', 'first-table'] as const;
 export type OnboardingStep = (typeof ONBOARDING_STEPS)[number];
 
 export const NEXT_STEP: Record<OnboardingStep, OnboardingStep | null> = {
   branding: 'reviews',
-  reviews: 'template',
-  template: 'first-table',
+  reviews: 'first-table',
   'first-table': null, // final → /admin
 };
 
 export const STEP_LABELS: Record<OnboardingStep, string> = {
   branding: 'Branding y bienvenida',
   reviews: 'Bonificación y reseñas',
-  template: 'Plantilla del menú',
   'first-table': 'Primera mesa',
 };
 

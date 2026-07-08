@@ -1,8 +1,14 @@
 import { notFound } from 'next/navigation';
 
-import { fetchActiveTable, getPublicMenuCached } from '@/lib/comensal/queries';
+import {
+  fetchActiveTable,
+  getPublicMenuCached,
+  getPublishedDesignCached,
+} from '@/lib/comensal/queries';
+import { fontFamily } from '@/lib/design/fonts';
 import { MENU_TEMPLATES, type MenuTemplate } from '@/lib/validations/menu';
 
+import { DesignExperience } from './design-experience';
 import { MenuExperience } from './menu-experience';
 import { TrackQrScan } from './track-qr-scan';
 
@@ -44,6 +50,29 @@ export default async function ComensalMenuPage({
   // si se llama vía cache que no aplica RLS por usuario):
   const visibleCategories = menu.categories.filter((c) => c.active);
   const visibleItems = menu.items.filter((i) => i.available);
+
+  // Editor Visual: si hay diseño publicado, renderiza bloques; si no, legacy.
+  const design = await getPublishedDesignCached(params.slug, menu.tenant.id);
+  if (design) {
+    return (
+      <>
+        <TrackQrScan tableId={table.id} />
+        <DesignExperience
+          design={design}
+          tenantName={menu.tenant.name}
+          tableNumber={table.number}
+          logoUrl={logoUrl}
+          welcomeMessage={welcomeMessage}
+          categories={visibleCategories}
+          items={visibleItems}
+          tableId={table.id}
+          bonusCopy={bonusCopy}
+          fontHeadingFamily={fontFamily(design.theme.font_heading)}
+          fontBodyFamily={fontFamily(design.theme.font_body)}
+        />
+      </>
+    );
+  }
 
   return (
     <>

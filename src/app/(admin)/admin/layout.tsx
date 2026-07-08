@@ -43,6 +43,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <nav className="space-y-1">
               <SidebarLink href="/admin" label="Dashboard" />
               <SidebarLink href="/admin/menu" label="Menú" />
+              <SidebarLink href="/admin/design" label="Diseño" />
               <SidebarLink href="/admin/tables" label="Mesas" />
               <SidebarLink href="/admin/calls" label="Llamadas" />
               <SidebarLink href="/admin/reviews" label="Reseñas" />
